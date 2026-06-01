@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sistema de Gerenciamento de Alunos - Controle de presença, cursos e registros de aula">
+  <title>Gerenciador de Alunos</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Editar</h3>
+        <button class="modal-close" id="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">Cancelar</button>
+        <button class="btn btn-primary" id="modal-save">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">☰</button>
+
+  <div class="app-layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <div class="logo-icon">🎓</div>
+          <div class="logo-text">
+            <h1>EduManager</h1>
+            <span>Gerenciador de Alunos</span>
+          </div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-page="dashboard" id="nav-dashboard">
+          <span class="nav-icon">📊</span> Dashboard
+        </a>
+        <a class="nav-item" data-page="alunos" id="nav-alunos">
+          <span class="nav-icon">👥</span> Alunos
+        </a>
+        <a class="nav-item" data-page="cursos" id="nav-cursos">
+          <span class="nav-icon">📚</span> Cursos
+        </a>
+        <a class="nav-item" data-page="registros" id="nav-registros">
+          <span class="nav-icon">📝</span> Registros de Aula
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-info">
+          <div class="footer-avatar">👤</div>
+          <div class="footer-text">
+            <p>Administrador</p>
+            <span>Sistema Ativo</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <section class="section-page active" id="page-dashboard">
+        <div class="page-header">
+          <h2>Dashboard</h2>
+          <p>Visão geral do sistema de gerenciamento</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon students">👥</div></div>
+            <div class="stat-value" id="stat-alunos">0</div>
+            <div class="stat-label">Alunos Ativos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon courses">📚</div></div>
+            <div class="stat-value" id="stat-cursos">0</div>
+            <div class="stat-label">Cursos Ativos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon records">📝</div></div>
+            <div class="stat-value" id="stat-registros">0</div>
+            <div class="stat-label">Registros de Aula</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-header"><div class="stat-icon attendance">✅</div></div>
+            <div class="stat-value" id="stat-presenca">0%</div>
+            <div class="stat-label">Taxa de Presença</div>
+          </div>
+        </div>
+        <div class="content-card">
+          <div class="content-card-header">
+            <h3><span class="icon">🕐</span> Últimos Registros</h3>
+          </div>
+          <div class="content-card-body">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>Aluno</th><th>Curso</th><th>Data</th><th>Tipo</th><th>Presença</th></tr></thead>
+                <tbody id="dashboard-recent-tbody">
+                  <tr><td colspan="5"><div class="empty-state"><div class="icon">📋</div><p>Nenhum registro encontrado</p></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== ALUNOS ===== -->
+      <section class="section-page" id="page-alunos">
+        <div class="page-header">
+          <h2>Alunos</h2>
+          <p>Gerencie os alunos cadastrados no sistema</p>
+        </div>
+        <!-- Form -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h3><span class="icon">➕</span> Cadastrar Aluno</h3>
+          </div>
+          <div class="content-card-body">
+            <form id="form-aluno">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="aluno-nome">Nome Completo</label>
+                  <input type="text" id="aluno-nome" placeholder="Ex: João da Silva" required>
+                </div>
+                <div class="form-group">
+                  <label for="aluno-cpf">CPF</label>
+                  <input type="text" id="aluno-cpf" placeholder="000.000.000-00" required maxlength="14">
+                </div>
+                <div class="form-group">
+                  <label for="aluno-email">E-mail</label>
+                  <input type="email" id="aluno-email" placeholder="joao@email.com" required>
+                </div>
+                <div class="form-group">
+                  <label for="aluno-telefone">Telefone</label>
+                  <input type="text" id="aluno-telefone" placeholder="(00) 00000-0000" required maxlength="15">
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Limpar</button>
+                <button type="submit" class="btn btn-primary" id="btn-salvar-aluno">💾 Cadastrar Aluno</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Table -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h3><span class="icon">📋</span> Alunos Cadastrados</h3>
+            <div class="header-actions">
+              <div class="filter-tabs" id="aluno-filter-tabs">
+                <button class="filter-tab active" data-filter="ativos">Ativos</button>
+                <button class="filter-tab" data-filter="inativos">Inativos</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="App.loadAlunos()">🔄</button>
+            </div>
+          </div>
+          <div class="content-card-body">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>ID</th><th>Nome</th><th>CPF</th><th>E-mail</th><th>Telefone</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody id="alunos-tbody">
+                  <tr><td colspan="7"><div class="empty-state"><div class="icon">👥</div><p>Nenhum aluno cadastrado</p></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== CURSOS ===== -->
+      <section class="section-page" id="page-cursos">
+        <div class="page-header">
+          <h2>Cursos</h2>
+          <p>Gerencie os cursos disponíveis</p>
+        </div>
+        <!-- Form -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h3><span class="icon">➕</span> Cadastrar Curso</h3>
+          </div>
+          <div class="content-card-body">
+            <form id="form-curso">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="curso-nome">Nome do Curso</label>
+                  <input type="text" id="curso-nome" placeholder="Ex: Piano Clássico" required>
+                </div>
+                <div class="form-group">
+                  <label for="curso-descricao">Descrição</label>
+                  <input type="text" id="curso-descricao" placeholder="Breve descrição do curso" required>
+                </div>
+                <div class="form-group">
+                  <label for="curso-carga">Carga Horária (h)</label>
+                  <input type="number" id="curso-carga" placeholder="Ex: 40" required min="1">
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Limpar</button>
+                <button type="submit" class="btn btn-primary" id="btn-salvar-curso">💾 Cadastrar Curso</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Table -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h3><span class="icon">📋</span> Cursos Cadastrados</h3>
+            <div class="header-actions">
+              <div class="filter-tabs" id="curso-filter-tabs">
+                <button class="filter-tab active" data-filter="ativos">Ativos</button>
+                <button class="filter-tab" data-filter="inativos">Inativos</button>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="App.loadCursos()">🔄</button>
+            </div>
+          </div>
+          <div class="content-card-body">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>ID</th><th>Nome</th><th>Descrição</th><th>Carga Horária</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody id="cursos-tbody">
+                  <tr><td colspan="6"><div class="empty-state"><div class="icon">📚</div><p>Nenhum curso cadastrado</p></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== REGISTROS DE AULA ===== -->
+      <section class="section-page" id="page-registros">
+        <div class="page-header">
+          <h2>Registros de Aula</h2>
+          <p>Registre presenças e acompanhe as aulas</p>
+        </div>
+        <!-- Form -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h3><span class="icon">➕</span> Novo Registro de Aula</h3>
+          </div>
+          <div class="content-card-body">
+            <form id="form-registro">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="registro-aluno">Aluno</label>
+                  <select id="registro-aluno" required><option value="">Selecione o aluno...</option></select>
+                </div>
+                <div class="form-group">
+                  <label for="registro-curso">Curso</label>
+                  <select id="registro-curso" required><option value="">Selecione o curso...</option></select>
+                </div>
+                <div class="form-group">
+                  <label for="registro-data">Data da Aula</label>
+                  <input type="date" id="registro-data" required>
+                </div>
+                <div class="form-group">
+                  <label for="registro-hora-inicio">Hora Início</label>
+                  <input type="time" id="registro-hora-inicio" required>
+                </div>
+                <div class="form-group">
+                  <label for="registro-hora-termino">Hora Término</label>
+                  <input type="time" id="registro-hora-termino" required>
+                </div>
+                <div class="form-group">
+                  <label for="registro-exercicio">Exercício</label>
+                  <input type="text" id="registro-exercicio" placeholder="Ex: Escala de Dó Maior" required>
+                </div>
+                <div class="form-group">
+                  <label for="registro-tipo">Tipo de Aula</label>
+                  <input type="text" id="registro-tipo" placeholder="Ex: Prática, Teórica" required>
+                </div>
+                <div class="form-group">
+                  <label for="registro-maquina">Nº da Máquina</label>
+                  <input type="number" id="registro-maquina" placeholder="Ex: 1" required min="1">
+                </div>
+                <div class="form-group">
+                  <label for="registro-presenca">Status de Presença</label>
+                  <select id="registro-presenca" required>
+                    <option value="">Selecione...</option>
+                    <option value="PRESENTE">✅ Presente</option>
+                    <option value="AUSENTE">❌ Ausente</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Limpar</button>
+                <button type="submit" class="btn btn-primary" id="btn-salvar-registro">💾 Registrar Aula</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Table -->
+        <div class="content-card">
+          <div class="content-card-header">
+            <h3><span class="icon">📋</span> Registros de Aula</h3>
+            <button class="btn btn-secondary btn-sm" onclick="App.loadRegistros()">🔄 Atualizar</button>
+          </div>
+          <div class="content-card-body">
+            <div class="table-wrapper">
+              <table>
+                <thead><tr><th>ID</th><th>Aluno</th><th>Curso</th><th>Data</th><th>Horário</th><th>Exercício</th><th>Tipo</th><th>Máquina</th><th>Presença</th><th>Ações</th></tr></thead>
+                <tbody id="registros-tbody">
+                  <tr><td colspan="10"><div class="empty-state"><div class="icon">📝</div><p>Nenhum registro encontrado</p></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
