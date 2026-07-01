@@ -612,7 +612,7 @@ const App = {
   inativarAluno(id, nome) {
     openModal('Inativar Aluno', `<p class="confirm-text">Deseja realmente inativar o aluno <strong>${nome}</strong>?</p>`, async () => {
       try {
-        await Api.delete(`/alunos/${id}`);
+        await Api.put(`/alunos/${id}/inativar`);
         showToast('Aluno inativado com sucesso!');
         closeModal(); await this.loadAlunos();
       } catch (e) { showToast(e.message, 'error'); }
@@ -688,7 +688,7 @@ const App = {
   inativarCurso(id, nome) {
     openModal('Inativar Curso', `<p class="confirm-text">Deseja realmente inativar o curso <strong>${nome}</strong>?</p>`, async () => {
       try {
-        await Api.delete(`/cursos/${id}`);
+        await Api.put(`/cursos/${id}/inativar`);
         showToast('Curso inativado com sucesso!');
         closeModal(); await this.loadCursos();
       } catch (e) { showToast(e.message, 'error'); }
