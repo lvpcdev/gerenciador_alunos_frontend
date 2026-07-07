@@ -91,6 +91,7 @@ let livroFilter = 'ativos';
 let pessoaOrdenacao = 'id';
 let livroOrdenacao = 'id';
 let emprestimoFilter = 'todos';
+let registroDataFiltro = new Date().toISOString().split('T')[0];
 let modalCallback = null;
 
 const Api = {
@@ -712,7 +713,7 @@ const App = {
   async loadRegistros() {
     showSkeleton('registros-tbody', 10);
     try {
-      registros = await Api.get('/registros');
+      registros = await Api.get(`/registros?data=${registroDataFiltro}`);
       renderRegistros(registros);
     } catch (e) { console.warn(e.message); registros = []; renderRegistros([]); }
   },
@@ -817,8 +818,8 @@ const App = {
 
   async loadSelectOptions() {
     try {
-      const alunosAtivos = await Api.get('/alunos/ativos');
-      const cursosAtivos = await Api.get('/cursos/ativos');
+      const alunosAtivos = await Api.get('/alunos/ativos?ordenacao=nome');
+      const cursosAtivos = await Api.get('/cursos/ativos?ordenacao=nome');
       document.getElementById('registro-aluno').innerHTML = '<option value="">Selecione o aluno...</option>' + alunosAtivos.map(a => `<option value="${a.id}">${escapeHTML(a.nome)}</option>`).join('');
       document.getElementById('registro-curso').innerHTML = '<option value="">Selecione o curso...</option>' + cursosAtivos.map(c => `<option value="${c.id}">${escapeHTML(c.nome)}</option>`).join('');
     } catch (e) { console.warn('Erro ao carregar opções:', e.message); }
@@ -852,7 +853,7 @@ const App = {
 
   async loadContratoSelectOptions() {
     try {
-      const alunosAtivos = await Api.get('/alunos/ativos');
+      const alunosAtivos = await Api.get('/alunos/ativos?ordenacao=nome');
       const alunoOpts = '<option value="">Selecione o aluno...</option>' + alunosAtivos.map(a => `<option value="${a.id}">${escapeHTML(a.nome)}</option>`).join('');
       document.getElementById('contrato-aluno').innerHTML = alunoOpts;
       const filtro = document.getElementById('contrato-filtro-aluno');
@@ -1185,8 +1186,8 @@ const App = {
 
   async loadBibliotecaSelectOptions() {
     try {
-      const pessoasAtivas = await Api.get('/pessoas/ativos');
-      const livrosAtivos = await Api.get('/livros/ativos');
+      const pessoasAtivas = await Api.get('/pessoas/ativos?ordenacao=nome');
+      const livrosAtivos = await Api.get('/livros/ativos?ordenacao=titulo');
       document.getElementById('emprestimo-pessoa').innerHTML = '<option value="">Selecione a pessoa...</option>' + pessoasAtivas.map(p => `<option value="${p.id}">${escapeHTML(p.nome)}</option>`).join('');
       document.getElementById('emprestimo-livro').innerHTML = '<option value="">Selecione o livro...</option>' + livrosAtivos.map(l => `<option value="${l.id}">${escapeHTML(l.titulo)}</option>`).join('');
     } catch (e) { console.warn('Erro ao carregar opções da biblioteca:', e.message); }
@@ -1222,6 +1223,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('registro-data').valueAsDate = new Date();
   document.getElementById('emprestimo-devolucao').valueAsDate = new Date();
+
+  document.getElementById('registro-data-filtro').value = registroDataFiltro;
+  document.getElementById('registro-data-filtro').addEventListener('change', (e) => {
+    registroDataFiltro = e.target.value;
+    App.loadRegistros();
+  });
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
   document.getElementById('modal-cancel').addEventListener('click', closeModal);
