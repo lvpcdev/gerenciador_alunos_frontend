@@ -792,3 +792,26 @@ tbody td:nth-child(2) { color: var(--ink); font-weight: 600; }
     scroll-behavior: auto !important;
   }
 }
+
+.date-filter-input {
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+
+.date-filter-input:hover {
+  border-color: var(--brand);
+}
+
+.date-filter-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-alpha, rgba(230,126,34,0.15));
+}
