@@ -92,6 +92,7 @@ let pessoaOrdenacao = 'id';
 let livroOrdenacao = 'id';
 let emprestimoFilter = 'todos';
 let registroDataFiltro = new Date().toISOString().split('T')[0];
+let dashboardDataFiltro = '';
 let modalCallback = null;
 
 const Api = {
@@ -381,7 +382,7 @@ function renderRegistros(list) {
 
 function renderDashboardRecent(list) {
   const tbody = document.getElementById('dashboard-recent-tbody');
-  const recent = list.slice(-5).reverse();
+  const recent = list;
   if (!recent.length) {
     tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><div class="icon">${EMPTY_ICON.registros}</div><p>Nenhum registro encontrado</p></div></td></tr>`;
     return;
@@ -801,7 +802,7 @@ const App = {
   async loadDashboard() {
     try { alunos = await Api.get('/alunos/ativos'); } catch (e) { alunos = []; }
     try { cursos = await Api.get('/cursos/ativos'); } catch (e) { cursos = []; }
-    try { registros = await Api.get('/registros'); } catch (e) { registros = []; }
+    try { registros = await Api.get(dashboardDataFiltro ? `/registros?data=${dashboardDataFiltro}` : '/registros'); } catch (e) { registros = []; }
 
     animateCounter(document.getElementById('stat-alunos'), alunos.length);
     animateCounter(document.getElementById('stat-cursos'), cursos.length);
@@ -1228,6 +1229,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('registro-data-filtro').addEventListener('change', (e) => {
     registroDataFiltro = e.target.value;
     App.loadRegistros();
+  });
+
+  document.getElementById('dashboard-data-filtro').addEventListener('change', (e) => {
+    dashboardDataFiltro = e.target.value;
+    App.loadDashboard();
   });
 
   document.getElementById('modal-close').addEventListener('click', closeModal);
